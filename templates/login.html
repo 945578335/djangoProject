@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Home</title>
+
+<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600|Montserrat:200,300,400" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.css">
+<link rel="stylesheet" href="/static/fonts/ionicons/css/ionicons.min.css">
+{#<link rel="stylesheet" href="/static/fonts/law-icons/font/flaticon.css">#}
+
+<link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/slick.css">
+<link rel="stylesheet" href="/static/css/slick-theme.css">
+
+<link rel="stylesheet" href="/static/css/helpers.css">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/landing-2.css">
+</head>
+
+<body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
+
+<nav class="navbar navbar-expand-lg navbar-dark pb_navbar pb_scrolled-light" id="pb-navbar">
+  <div class="container">
+	<button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#probootstrap-navbar" aria-controls="probootstrap-navbar" aria-expanded="false" aria-label="Toggle navigation">
+	  <span><i class="ion-navicon"></i></span>
+	</button>
+	<div class="collapse navbar-collapse" id="probootstrap-navbar">
+	  <ul class="navbar-nav ml-auto">
+		<li class="nav-item"><a class="nav-link" href="#section-introduce">PHC简介</a></li>
+		<li class="nav-item"><a class="nav-link" href="#section-basic">PHC构建</a></li>
+		<li class="nav-item"><a class="nav-link" href="#section-sign">PHC签名</a></li>
+		<li class="nav-item"><a class="nav-link" href="#section-questions">意义</a></li>
+		<li class="nav-item cta-btn ml-xl-2 ml-lg-2 ml-md-0 ml-sm-0 ml-0"><a class="nav-link" href="#section-home" target="_blank"><span class="pb_rounded-4 px-4">Get Started</span></a></li>
+	  </ul>
+	</div>
+  </div>
+</nav>
+<!-- END nav -->
+
+<section class="pb_cover_v3 overflow-hidden cover-bg-indigo cover-bg-opacity text-left pb_gradient_v1 pb_slant-light" id="section-home">
+  <div class="container">
+	<div class="row align-items-center justify-content-center">
+	  <div class="col-md-6">
+            <h2 class="heading mb-3">基于报文哈希链的签名认证系统</h2>
+            <div class="sub-heading">
+            <p class="mb-4">Signature authentication system based on PHC(Packet Hash Chain)</p>
+            <p class="mb-5"><a class="btn btn-success btn-lg pb_btn-pill smoothscroll" href="#section-introduce"><span class="pb_font-14 text-uppercase pb_letter-spacing-1">查看简介</span></a></p>
+		</div>
+	  </div>
+	  <div class="col-md-1">
+	  </div>
+	  <div class="col-md-5 relative align-self-center">
+
+		<form action="http://127.0.0.1:8000/login/" class="bg-white rounded pb_form_v1" method="post">
+		  <h2 class="mb-4 mt-0 text-center">用户登录</h2>
+		  <div class="form-group">
+			<input type="text" name="usename" class="form-control pb_height-50 reverse" placeholder="用户名">
+              {{ erro1 }}
+		  </div>
+		  <div class="form-group">
+			<input type="password" name="password" class="form-control pb_height-50 reverse" placeholder="密码">
+              {{ erro2 }}
+		  </div>
+		  <div class="form-group">
+			<div class="pb_select-wrap">
+			  <select  name="usertype" class="form-control pb_height-50 reverse">
+				<option value="3" selected>角色类型</option>
+				<option value="0">普通用户</option>
+				<option value="1">管理员</option>
+			  </select>
+                {{ erro3 }}
+			</div>
+		  </div>
+		  <div class="form-group">
+			<input type="submit" class="btn btn-primary btn-lg btn-block pb_btn-pill  btn-shadow-blue" value="登录">
+              <div style="float: left"><a href="http://127.0.0.1:8000/register/" style="color: black">注册</a></div>
+              <div style="float: right"><a style="color: black">忘记密码</a></div>
+          </div>
+		</form>
+
+	  </div>
+	</div>
+  </div>
+</section>
+<!-- END section -->
+
+<section class="pb_section bg-light pb_slant-white pb_pb-250" id="section-introduce">
+  <div class="container">
+	<div class="row justify-content-center mb-5">
+	  <div class="col-md-6 text-center mb-5">
+{#		<h5 class="text-uppercase pb_font-15 mb-2 pb_color-dark-opacity-3 pb_letter-spacing-2"><strong>简介</strong></h5>#}
+		<h2>报文哈希链签名认证系统介绍</h2>
+	  </div>
+	</div>
+
+
+		  <div class="media-body">
+
+			<h3 class="text-sans-serif" style="text-indent:50px;letter-spacing:4px;line-height:40px">针对TCP/IP协议缺乏认证机制引起的网络安全问题，以及现有认证方法存在效率低的问题，提出了一种基于报文哈希链的签名认证方法。该方法将所传输报文的哈希值通过迭代哈希，形成一个关于报文序列的哈希链，通信双方通过报文哈希链确保报文序列的完整性、真实性和不可抵赖性，提高报文传输的安全性。在进行数据签名认证时，通信双方只需按一定间隔对数据报文进行签名认证，就能确保多个报文的完整性和不可抵赖性，有效提高报文传输的效率。且这种签名认证方法能有效防范中间人攻击。</h3>
+		  </div>
+
+
+  </div>
+</section>
+
+
+
+
+<section class="pb_section pb_slant-light" id="section-basic">
+  <div class="container">
+	<div class="row">
+      <div class="col-lg-6 mb-5">
+		  <img src="/static/images/basic_hashchain.png" alt="Image placeholder" class="img-fluid">
+	  </div>
+	  <div class="col-lg-5 pl-md-5 pl-sm-0">
+		<div class="row">
+		  <div class="col">
+			<h2>PHC构建</h2>
+              <p class="pb_font-25">报文哈希链的基本构建方法</p>
+		  </div>
+		</div>
+
+		<div class="row">
+		  <div class="col-lg">
+              <h3 class="text-sans-serif" style="letter-spacing:2px;line-height:35px">报文1到报文n通过哈希函数计算能够得到哈希值h1到哈希值hn，将哈希值h1到哈希值hn作为一个哈希序列。将哈希队列队头的一个元素取出，再与哈希链的链尾元素一起通过哈希函数计算得到一个新的哈希值作为报文哈希链尾部节点。</h3>
+		  </div>
+
+		</div>
+
+	  </div>
+	</div>
+  </div>
+</section>
+<!-- END section -->
+
+{#<div class="tlinks">Collect from <a href="http://www.cssmoban.com/"  title="网站模板">网站模板</a></div>#}
+<section class="pb_section bg-light pb_slant-white" id="section-sign">
+  <div class="container">
+	<div class="row">
+
+	  <div class="col-lg-7 ">
+		<div class="row">
+		  <div class="col">
+			<h2>PHC签名</h2>
+			<p class="pb_font-25">基于报文哈希链的签名流程</p>
+		  </div>
+		</div>
+		<div class="row">
+		  <div  class="col-lg-10 order-2">
+				<img src="/static/images/sig_introduce.png" alt="Image placeholder" class="img-fluid">
+		  </div>
+		</div>
+	  </div>
+        <div class="col-lg-5">
+		<img src="/static/images/sig.png" alt="Image placeholder" class="img-fluid">
+	  </div>
+	</div>
+    <br><br><br><br><br><br>
+
+    <div class="row">
+      <div class="col-lg-4 mb-5">
+		  <img src="/static/images/ver.png" alt="Image placeholder" class="img-fluid">
+	  </div>
+	  <div class="col-lg-8 pl-md-5 pl-sm-0">
+		<div class="row">
+		  <div class="col">
+			<p class="pb_font-25">基于报文哈希链的验证流程</p>
+		  </div>
+		</div>
+
+		<div class="row">
+		  <div  class="col-lg-10 order-2">
+              <img src="/static/images/ver_introduce.png" alt="Image placeholder" class="img-fluid">
+          </div>
+
+		</div>
+
+	  </div>
+	</div>
+  </div>
+</section>
+<!-- END section -->
+
+<section class="pb_section pb_slant-white" id="section-questions">
+  <div class="container">
+	<div class="row justify-content-center mb-5">
+	  <div class="col-md-6 text-center mb-5">
+		<h2>研究意义与相关问题</h2>
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="col-md">
+		<div id="pb_faq" class="pb_accordion" data-children=".item">
+		  <div class="item">
+			<a data-toggle="collapse" data-parent="#pb_faq" href="#pb_faq1" aria-expanded="true" aria-controls="pb_faq1" class="pb_font-22 py-4">研究意义</a>
+			<div id="pb_faq1" class="collapse show" role="tabpanel">
+			  <div class="py-3">
+			  <p>聚集于在保障报文传输中数据完整性、真实性以及不可否认性的前提下，提出一种基于报文哈希链的签名认证方法，该方法在保证报文传输过程中完整性、真实性和不可否认性的同时，通过形成一个报文序列的哈希链进行报文的认证，使报文传输达到更高的传输效率。</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="item">
+			<a data-toggle="collapse" data-parent="#pb_faq" href="#pb_faq2" aria-expanded="false" aria-controls="pb_faq2" class="pb_font-22 py-4">团队介绍</a>
+			<div id="pb_faq2" class="collapse" role="tabpanel">
+			  <div class="py-3">
+				<p>本系统为北京信息科技大学bistu队的全国密码学技术竞赛复赛作品，领队老师为任亚唯老师，指导老师为蒋文保老师，队内成员为韩明轩、叶帅和刘颖慧。</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="item">
+			<a data-toggle="collapse" data-parent="#pb_faq" href="#pb_faq3" aria-expanded="false" aria-controls="pb_faq3" class="pb_font-22 py-4">相关成果</a>
+			<div id="pb_faq3" class="collapse" role="tabpanel">
+			  <div class="py-3">
+				<p>本作品已经申请获得3项专利，两篇学术论文在投，具有十分积极的实用价值和研究价值。</p>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+</section>
+
+<!-- END section -->
+
+<footer class="pb_footer bg-light" role="contentinfo">
+  <div class="container">
+	<div class="row text-center">
+	  <div class="col">
+		<ul class="list-inline">
+		  <li class="list-inline-item"><a href="#" class="p-2"><i class="fa fa-facebook"></i></a></li>
+		  <li class="list-inline-item"><a href="#" class="p-2"><i class="fa fa-twitter"></i></a></li>
+		  <li class="list-inline-item"><a href="#" class="p-2"><i class="fa fa-linkedin"></i></a></li>
+		</ul>
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="col text-center">
+		<p class="pb_font-14">Copyright &copy; 2021.北京信息科技大学 bistu队</p>
+	  </div>
+	</div>
+  </div>
+</footer>
+
+<!-- loader -->
+<div id="pb_loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#1d82ff"/></svg></div>
+
+
+
+<script src="/static/js/jquery.min.js"></script>
+
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/slick.min.js"></script>
+<script src="/static/js/jquery.mb.YTPlayer.min.js"></script>
+
+<script src="/static/js/jquery.waypoints.min.js"></script>
+<script src="/static/js/jquery.easing.1.3.js"></script>
+
+<script src="/static/js/main.js"></script>
+
+</body>
+</html>
