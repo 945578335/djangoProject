@@ -39,7 +39,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'phc',
     'mgr',
+    'channels',
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+        "hosts": [('127.0.0.1', 6379)],
+    },
+    # 配置路由的路径
+    # "ROUTING": "exmchannels.routing.channel_routing",
+    },
+}
+ASGI_APPLICATION = 'exmchannels.routing.application'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -81,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sys',
         'USER': 'root',
-        'PASSWORD': '137185',
+        'PASSWORD': 'password',
         'HOST': '127.0.0.1',
         'PORT': '3306'
     }
