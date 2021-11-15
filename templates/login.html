@@ -18,7 +18,10 @@
 <link rel="stylesheet" href="/static/css/helpers.css">
 <link rel="stylesheet" href="/static/css/style.css">
 <link rel="stylesheet" href="/static/css/landing-2.css">
+    <script src="/static/js/jquery.min.js"></script>
 </head>
+
+
 
 <body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
 
@@ -54,7 +57,7 @@
 	  </div>
 	  <div class="col-md-5 relative align-self-center">
 
-		<form action="http://127.0.0.1:8000/login/" class="bg-white rounded pb_form_v1" method="post">
+		<form class="bg-white rounded pb_form_v1" method="post" id="form_id">
 		  <h2 class="mb-4 mt-0 text-center">用户登录</h2>
 		  <div class="form-group">
 			<input type="text" name="usename" class="form-control pb_height-50 reverse" placeholder="用户名">
@@ -76,7 +79,7 @@
 		  </div>
 		  <div class="form-group">
 			<input type="submit" class="btn btn-primary btn-lg btn-block pb_btn-pill  btn-shadow-blue" value="登录">
-              <div style="float: left"><a href="http://127.0.0.1:8000/register/" style="color: black">注册</a></div>
+              <div style="float: left"><a href="http://{{ ip }}:8000/register/" style="color: black">注册</a></div>
               <div style="float: right"><a style="color: black">忘记密码</a></div>
 
           </div>
@@ -249,7 +252,14 @@
 <!-- loader -->
 <div id="pb_loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#1d82ff"/></svg></div>
 
+<script>
 
+    var pageurl = window.location.host;
+    $("#form_id").attr('action','/login/');
+    {#document.getElementById('#form_id').setAttribute('action', `${pageurl}/login/`)#}
+    {#action="http://{{ ip }}:8000/login/"#}
+
+</script>
 
 <script src="/static/js/jquery.min.js"></script>
 

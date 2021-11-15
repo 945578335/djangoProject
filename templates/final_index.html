@@ -158,7 +158,7 @@
                                 <hr>
                             </li>
                             <li>
-                                <a rel="nofollow" href="http://127.0.0.1:8000" class="dropdown-item">
+                                <a rel="nofollow" href="http://{{ ip }}:8000" class="dropdown-item">
                                     <div class="notification">
                                         <div class="notification-content"><i class="fa fa-power-off"></i>Logout</div>
                                     </div>
@@ -288,24 +288,25 @@
             <!-- Sidebar Navidation Menus-->
             <ul class="list-unstyled">
 
-                <li> <a href="http://127.0.0.1:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
-                <li> <a href="http://127.0.0.1:8000/phc/trans_page/"><i class="fa fa-globe"></i>传输</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
+                <li> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>传输</a></li>
                 <li><a href="#construction_method" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>构建方法 </a>
                     <ul id="construction_method" class="collapse list-unstyled">
-                        <li><a href="http://127.0.0.1:8000/phc/basic_hash_index/">基本构建方法</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/basic_hash_index/">基本构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
                     </ul>
                 </li>
                 <li class="active"><a href="#signature_method" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-building-o"></i>签名方法 </a>
                     <ul id="signature_method" class="collapse list-unstyled">
-                        <li><a href="http://127.0.0.1:8000/phc/first_sign_index/">首包签名</a></li>
-                        <li class="active"><a href="http://127.0.0.1:8000/phc/final_sign_index/">尾包签名</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/interval_sign_index/">固定间隔签名</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/first_sign_index/">首包签名</a></li>
+                        <li class="active"><a href="http://{{ ip }}:8000/phc/final_sign_index/">尾包签名</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/interval_sign_index/">固定间隔签名</a></li>
                     </ul>
                 </li>
-                <li> <a href="http://127.0.0.1:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
@@ -347,7 +348,7 @@
                       <td>{{ item.dip }}</td>
                       <td>基本构建方法</td>
                         <td>尾包签名</td>
-                      <td><a href="http://127.0.0.1:8000/phc/phcfinal{{ item.id }}/">查看</a></td>
+                      <td><a href="http://{{ ip }}:8000/phc/phcfinal{{ item.id }}/">查看</a></td>
                     </tr>
                    {% endfor %}
                   </tbody>

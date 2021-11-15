@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.conf.global_settings import SESSION_COOKIE_NAME, SESSION_COOKIE_PATH
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-@=7vi)+s_6-g$st$a+qgcrjwfx937m9#+80^bl=lw+szk$w1)s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['211.82.111.88', '127.0.0.1']
 
 
 # Application definition
@@ -37,23 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'phc',
+    'phc.apps.PhcConfig',
     'mgr',
     'channels',
 ]
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-        "hosts": [('127.0.0.1', 6379)],
-    },
-    # 配置路由的路径
-    # "ROUTING": "exmchannels.routing.channel_routing",
-    },
-}
-ASGI_APPLICATION = 'exmchannels.routing.application'
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,7 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'djangoProject.wsgi.application'
-
+ASGI_APPLICATION = 'djangoProject.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -120,6 +109,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CHANNEL_LAYERS = {
+    "default":{
+        "BACKEND":"channels.layers.InMemoryChannelLayer",
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -150,4 +144,4 @@ STATICFILES_DIRS = (
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

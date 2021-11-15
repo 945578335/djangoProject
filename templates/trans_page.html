@@ -23,7 +23,50 @@
 
     <!-- Core stylesheets -->
     <link rel="stylesheet" href="/static/index/css/form.css">
+    <script src="/static/index/js/jquery.min.js"></script>
+    <script src="/static/index/js/jquery.cookie.js"></script>
 </head>
+
+<script>
+
+    console.log($.cookie('username'));
+    console.log($.cookie('ip'));
+
+    var socket = new WebSocket("ws://{{ ip }}:8000/chatchannel/{{ roomnum }}/");
+
+    socket.onopen = function (event){
+
+        {#let tag = document.createElement("div");#}
+        {#tag.innerHTML = "[连接成功]";#}
+        {#document.getElementById("trans_message").appendChild(tag);#}
+
+    }
+
+    socket.onmessage = function (event){
+        let div =  document.createElement("div");
+        let name =  document.createElement("div");
+        let lable = document.createElement("label");
+        let json_message = JSON.parse(event.data);
+        name.innerText = json_message['username']+ ":" + json_message['content'];
+        lable.setAttribute("class", "badge badge-success");
+        lable.innerText = "Hash_Chain_Verifyed";
+        div.appendChild(name);
+        div.append(lable);
+        document.getElementById('trans_message').appendChild(div);
+    }
+
+    function sendMessage(){
+        let tag = document.getElementById('message_content');
+        let json_message = {"username":$.cookie('username'), 'content':tag.value}
+        socket.send(JSON.stringify(json_message));
+        tag.value = "";
+    }
+
+    function closeMessage(){
+        socket.close();
+    }
+
+</script>
 
 <body>
     
@@ -159,7 +202,7 @@
                                 <hr>
                             </li>
                             <li>
-                                <a rel="nofollow" href="http://127.0.0.1:8000" class="dropdown-item">
+                                <a rel="nofollow" href="http://{{ ip }}:8000" class="dropdown-item">
                                     <div class="notification">
                                         <div class="notification-content"><i class="fa fa-power-off"></i>Logout</div>
                                     </div>
@@ -288,24 +331,25 @@
             <!-- Sidebar Navidation Menus-->
             <ul class="list-unstyled">
 
-                <li> <a href="http://127.0.0.1:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
-                <li class="active"> <a href="http://127.0.0.1:8000/phc/trans_page/"><i class="fa fa-globe"></i>传输</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
+                <li class="active"> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>传输</a></li>
                 <li><a href="#construction_method" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>构建方法 </a>
                     <ul id="construction_method" class="collapse list-unstyled">
-                        <li><a href="http://127.0.0.1:8000/phc/basic_hash_index/">基本构建方法</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/basic_hash_index/">基本构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
                     </ul>
                 </li>
                 <li><a href="#signature_method" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-building-o"></i>签名方法 </a>
                     <ul id="signature_method" class="collapse list-unstyled">
-                        <li><a href="http://127.0.0.1:8000/phc/first_sign_index/">首包签名</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/final_sign_index/">尾包签名</a></li>
-                        <li><a href="http://127.0.0.1:8000/phc/interval_sign_index/">固定间隔签名</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/first_sign_index/">首包签名</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/final_sign_index/">尾包签名</a></li>
+                        <li><a href="http://{{ ip }}:8000/phc/interval_sign_index/">固定间隔签名</a></li>
                     </ul>
                 </li>
-                <li> <a href="http://127.0.0.1:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
@@ -339,7 +383,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="dip">目的ip地址</label>
-                                        <input type="text" class="form-control" id="dip" aria-describedby="emailHelp" placeholder="输入目的ip地址">
+                                        <input type="text" class="form-control" id="dip" aria-describedby="emailHelp" placeholder="192.168.137.137---211.82.111.88">
                                         <small id="emailHelp" class="form-text text-muted">将与目的ip地址构成哈希链</small>
                                     </div>
                                     <div class="form-group">
@@ -371,11 +415,11 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="trans_message">交互数据</label>
-                                        <textarea class="form-control" id="trans_message" rows="25"></textarea>
+                                        <div class="form-control" id="trans_message" rows="25"></div>
                                     </div>
                                 </div>
                             </div> 
-                            <button type="submit" class="btn btn-general btn-blue mr-2">发送</button>
+                            <button type="button" class="btn btn-general btn-blue mr-2" onclick="sendMessage()">发送</button>
                         </form>
                     </div>
 
@@ -387,10 +431,10 @@
 
     <!--Global Javascript -->
     <script src="/static/index/js/jquery.min.js"></script>
+    <script src="/static/index/js/jquery.cookie.js"></script>
     <script src="/static/index/js/popper/popper.min.js"></script>
     <script src="/static/index/js/tether.min.js"></script>
     <script src="/static/index/js/bootstrap.min.js"></script>
-    <script src="/static/index/js/jquery.cookie.js"></script>
     <script src="/static/index/js/jquery.validate.min.js"></script>
     <script src="/static/index/js/chart.min.js"></script>
     <script src="/static/index/js/front.js"></script>
@@ -423,6 +467,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>

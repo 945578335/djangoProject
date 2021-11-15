@@ -1,6 +1,6 @@
 from django.urls import path
 from phc import views
-from phc import trans_socket
+
 urlpatterns = [
     path('phcindex/',views.indexshow),
 
@@ -31,5 +31,6 @@ urlpatterns = [
     path('phcinterval1/',views.intervalshow1),
     path('phcinterval2/', views.intervalshow2),
 
-    path('trans_page/', trans_socket.trans_page),
+    path('datashow_page/', views.datashow_page),
+
 ]

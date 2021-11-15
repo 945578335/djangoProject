@@ -4,8 +4,16 @@ from django.shortcuts import render
 from django.shortcuts import render
 from django.http import HttpResponse
 from mgr import models
+from django.conf import settings
+
+sip = settings.ALLOWED_HOSTS[0]
+
 import json
 def login(request):
+    global sip
+    host = request.get_host().split(":")
+    sip = host[0]
+    print(sip)
     return render(request, 'login.html')
 def register(request):
     return render(request, 'register.html')
@@ -22,7 +30,9 @@ def uselogin(request):
            verify = models.PhcUser.objects.get(username=action['usename'])
            if verify.password == action['password']:
                if verify.action == int(action['usertype']):
-                   return render(request, 'index.html',{'username':verify.username})
+                   request.session['ip'] = "19216801"
+                   request.session['username'] = verify.username
+                   return render(request, 'index.html',{'username':verify.username, 'ip':sip, 'roomnum':'19216801'})
                else:
                    return render(request, 'login.html', {'erro3': login3})
            else:
@@ -51,4 +61,7 @@ def useregister(request):
            return render(request, 'register.html', {'erro1':register1})
     else:
        return HttpResponse("注册失败")
+
+def get_username():
+    return USERNAME
 

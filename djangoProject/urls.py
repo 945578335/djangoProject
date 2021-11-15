@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path,include
+from phc import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('phc/',include("phc.urls")),
     path('',include("mgr.urls")),
+    path('trans_page/',views.trans_page),
 ]
