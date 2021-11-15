@@ -43,23 +43,53 @@
     }
 
     socket.onmessage = function (event){
+
         let div =  document.createElement("div");
         let name =  document.createElement("div");
-        let lable = document.createElement("label");
+        let final_node = document.createElement("div");
+        let hashchain = document.createElement("label");
+
+
         let json_message = JSON.parse(event.data);
-        name.innerText = json_message['username']+ ":" + json_message['content'];
-        lable.setAttribute("class", "badge badge-success");
-        lable.innerText = "Hash_Chain_Verifyed";
+
+        name.innerText = "[" + json_message['username'] + "]" + ": " + json_message['content'];
+        final_node.innerText = "[Hash_Chain]" + ": " + json_message['final_node'];
+        hashchain.setAttribute("class", "badge badge-success");
+        hashchain.innerText = "Hash_Chain_Verified";
+
         div.appendChild(name);
-        div.append(lable);
+        div.appendChild(final_node);
+        div.appendChild(hashchain);
+
+        if(json_message['signature_txt'] != ""){
+
+            let signature = document.createElement("label");
+            signature.setAttribute("class", "badge badge-success");
+
+            let signature_txt = document.createElement("div");
+            signature_txt.innerText = "[Signature]" + ": " + json_message['signature_txt'];
+
+            signature.innerText = "Signature_Verified";
+            div.appendChild(signature_txt);
+            div.appendChild(signature);
+
+        }
+
+        let itv =  document.createElement("div");
+        itv.innerText = "-----------------------------------------------------------------------------------------------------------------------------------";
+        div.appendChild(itv);
+
         document.getElementById('trans_message').appendChild(div);
     }
 
     function sendMessage(){
         let tag = document.getElementById('message_content');
-        let json_message = {"username":$.cookie('username'), 'content':tag.value}
-        socket.send(JSON.stringify(json_message));
-        tag.value = "";
+        if(tag.value != ""){
+            let sig_opt = $("#signature_method_select option:selected");
+            let json_message = {"username":$.cookie('username'), 'content':tag.value, 'sig_opt':sig_opt.val()}
+            socket.send(JSON.stringify(json_message));
+            tag.value = "";
+        }
     }
 
     function closeMessage(){
@@ -398,9 +428,10 @@
                                     <div class="form-group">
                                         <label for="signature_method_select">签名方式</label>
                                         <select class="form-control" id="signature_method_select">
-                                            <option>首包签名</option>
-                                            <option>尾包签名</option>
-                                            <option>间隔签名</option>
+                                            <option value="1">首包签名</option>
+                                            <option value="2">尾包签名</option>
+                                            <option value="3">间隔签名</option>
+                                            <option value="4">即时签名</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -415,7 +446,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="trans_message">交互数据</label>
-                                        <div class="form-control" id="trans_message" rows="25"></div>
+                                        <div class="form-control" id="trans_message" rows="25" style="width:565px;height:360px;overflow-x:auto;overflow-y:auto"></div>
                                     </div>
                                 </div>
                             </div> 

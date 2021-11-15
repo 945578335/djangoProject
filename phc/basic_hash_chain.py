@@ -1,4 +1,4 @@
-import sm3
+from phc import sm3
 
 class Node(object):
     def __init__(self, packet_hash, hash_chain, sequence):
@@ -80,6 +80,7 @@ class Hash_Chain(object):
 
     def get_final_hash_chain_node(self):
         print(self.header.hash_chain)
+        return self.header.hash_chain
 
 def init_hash_chain(hash_chain):
     register = "register"
