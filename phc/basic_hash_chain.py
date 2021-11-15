@@ -43,17 +43,13 @@ class Hash_Chain(object):
                 current_Node = current_Node.next
             print("\n")
 
-    # 8、查找是否包含,并返回下标
-    def isContain(self, num):
-        contain = 0
+    def isContain(self, trace_hashchain):
         current_Node = self.header
         for i in range(self.length):
-            if current_Node.element == num:
-                print("%d在链表中%d处\n" % (num, i + 1))  # i+1是在正常人认为的位置处，程序员一般是从0开始算起
-                contain = 1
+            if current_Node.hash_chain == trace_hashchain:
+                return True
             current_Node = current_Node.next
-        if contain == 0:
-            print("%d不在链表中\n" % num)
+        return False
 
     # 9、根据下标找节点
     def searchNodeByIndex(self, index):

@@ -1,11 +1,10 @@
-import datetime
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import JsonResponse
 import json
 from phc import models
 from mgr import views
 from django.conf import settings
+from phc.consumers import hash_chain_p
+from phc import basic_hash_chain
 
 sip = settings.ALLOWED_HOSTS[0]
 def get_ip(request):
@@ -144,3 +143,24 @@ def trans_page(request):
 def datashow_page(request):
     sip = get_ip(request)
     return render(request, "performance_chart.html", {'username':request.session["username"], 'ip':sip, 'roomnum':request.session["ip"]});
+
+def message_trace(request):
+    sip = get_ip(request)
+    # hash_chain_p =
+    return render(request, 'message_trace.html',{'username': request.session["username"], 'ip': sip, 'roomnum': request.session["ip"]})
+
+def trace(request):
+    sip = get_ip(request)
+    username_id = request.POST.get("username_id")
+    print("username_id", username_id)
+    trace_message = request.POST.get("trace_message")
+    print("trace_message", trace_message)
+    trace = "无法追溯"
+    if hash_chain_p.__contains__(username_id) == False:
+        return render(request, 'message_trace.html', {'username': request.session["username"], 'ip': sip, 'roomnum': request.session["ip"], "trace_message": trace})
+    hash_chain = hash_chain_p[username_id]
+    trace_flag = hash_chain.isContain(trace_message)
+    trace = ""
+    if trace_flag == True:
+        trace = "此id的报文哈希链能被追溯"
+    return render(request, 'message_trace.html', {'username': request.session["username"], 'ip': sip, 'roomnum': request.session["ip"], "trace_message":trace})

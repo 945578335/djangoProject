@@ -32,5 +32,7 @@ urlpatterns = [
     path('phcinterval2/', views.intervalshow2),
 
     path('datashow_page/', views.datashow_page),
+    path('message_trace/', views.message_trace),
+    path('trace/', views.trace),
 
 ]
