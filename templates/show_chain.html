@@ -1,5 +1,5 @@
 
-
+    
 <!DOCTYPE html>
 <html>
 
@@ -22,9 +22,15 @@
     <link rel="stylesheet" href="/static/index/css/style.default.css" id="theme-stylesheet">
 
     <!-- Core stylesheets -->
-    <link rel="stylesheet" href="/static/index/css/form.css">
+    <link rel="stylesheet" href="/static/index/css/ui-elements/timeline.css">
     <script src="/static/index/js/jquery.min.js"></script>
     <script src="/static/index/js/jquery.cookie.js"></script>
+
+    <style>
+        .row{
+            margin-left: 0px;
+        }
+    </style>
 </head>
 
 <script>
@@ -32,7 +38,7 @@
     console.log($.cookie('username_ip'));
     console.log($.cookie('ip'));
 
-    var socket = new WebSocket("ws://{{ ip }}:8000/chatchannel/{{ roomnum }}/");
+    var socket = new WebSocket("ws://{{ sip }}:8000/chatchannel/{{ roomnum }}/");
 
     socket.onopen = function (event){
 
@@ -44,89 +50,63 @@
 
     socket.onmessage = function (event){
 
-        let div =  document.createElement("div");
-        let name =  document.createElement("div");
-        let final_node = document.createElement("div");
-        let hashchain = document.createElement("label");
-
         let json_message = JSON.parse(event.data);
+        let hashchain_line = document.getElementById('timeline-1');
 
-        name.innerText = "[" + json_message['username_ip'] + "]" + ": " + json_message['content'];
-        final_node.innerText = "[Hash_Chain]" + ": " + json_message['final_node'];
-        hashchain.setAttribute("class", "badge badge-success");
-        hashchain.innerText = "Hash_Chain_Verified";
+        let line = document.createElement("div");
+        line.setAttribute("class", "timeline");
 
-        div.appendChild(name);
-        div.appendChild(final_node);
-        div.appendChild(hashchain);
+        let icon = document.createElement("div");
+        icon.setAttribute("class", "time-line-icon");
+        line.appendChild(icon);
 
-        if(json_message['signature_txt'] != ""){
+        let tlcontent = document.createElement("div");
+        tlcontent.setAttribute("class", "timeline-content");
 
-            let signature = document.createElement("label");
-            signature.setAttribute("class", "badge badge-success");
+        let sip_tag = document.createElement("span");
+        sip_tag.setAttribute("class", "date");
+        sip_tag.innerText = "{{ dip }}";
 
-            let signature_txt = document.createElement("div");
-            signature_txt.innerText = "[Signature]" + ": " + json_message['signature_txt'];
+        let dip_tag = document.createElement("span");
+        dip_tag.setAttribute("class", "date");
+        dip_tag.innerText = "{{ sip }}";
 
-            signature.innerText = "Signature_Verified";
-            div.appendChild(signature_txt);
-            div.appendChild(signature);
+        let seq_tag = document.createElement("h5");
+        seq_tag.setAttribute("class", "title");
+        seq_tag.innerText = "[序列号]:  " + json_message["seq_s"];
 
-        }
+        let chainhash_tag = document.createElement("p");
+        chainhash_tag.setAttribute("class", "description");
+        chainhash_tag.innerText = "[报文哈希链节点值]: " + json_message["chainhash_s"] + "\r[消息哈希值]: " + json_message["msghash_s"];
 
-        let itv =  document.createElement("div");
-        itv.innerText = "-----------------------------------------------------------------------------------------------------------------------------------";
-        div.appendChild(itv);
+        {#let msghash_tag = document.createElement("p");#}
+        {#msghash_tag.setAttribute("class", "description");#}
+        {#msghash_tag.innerText = List[i]["msghash"];#}
 
-        document.getElementById('trans_message').appendChild(div);
+        let action_tag = document.createElement("div");
+        action_tag.setAttribute("class", "badge badge-success");
+        action_tag.innerText = json_message["action_s"];
 
-    }
+        tlcontent.appendChild(sip_tag);
+        tlcontent.appendChild(dip_tag);
+        tlcontent.appendChild(seq_tag);
+        tlcontent.appendChild(chainhash_tag);
+        tlcontent.appendChild(action_tag);
 
-    function sendMessage(){
-        let dip = document.getElementById('dip');
-        let tag = document.getElementById('message_content');
-        if(tag.value != ""){
-            let sig_opt = $("#signature_method_select option:selected");
-            let con_opt = $("#construction_method_select option:selected");
-            let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':tag.value, 'sig_opt':sig_opt.val(), 'con_opt': con_opt.val()}
-            socket.send(JSON.stringify(json_message));
-            tag.value = "";
-        }
-    }
+        line.appendChild(tlcontent);
 
-    function randomString() {
-        length = 64;
-        var str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        var result = '';
-        for (var i = length; i > 0; --i)
-            result += str[Math.floor(Math.random() * str.length)];
-        return result;
-}
-
-    function sendMessage_lot(){
-
-
-        let dip = document.getElementById('dip');
-        dip.setAttribute("disabled", "disabled");
-
-        let sig_slt = document.getElementById('signature_method_select');
-        sig_slt.setAttribute("disabled", "disabled");
-
-        let con_slt = document.getElementById('construction_method_select');
-        con_slt.setAttribute("disabled", "disabled");
-
-        let sig_opt = $("#signature_method_select option:selected");
-        let con_opt = $("#construction_method_select option:selected");
-        var i = 0;
-        while (i <1000){
-            random_str = randomString();
-            let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':random_str, 'sig_opt':sig_opt.val(), 'con_opt': con_opt.val()}
-            socket.send(JSON.stringify(json_message));
-            i ++;
-        }
-        dip.removeAttribute("disabled");
-        sig_slt.removeAttribute("disabled");
-        con_slt.removeAttribute("disabled");
+        let lstchild = document.getElementById("attention");
+        lstchild.removeAttribute("id")
+        line.setAttribute("id", "attention");
+        {#hashchain_line.appendChild(line);#}
+        setTimeout(function (){
+            hashchain_line.appendChild(line);
+            document.querySelector('#attention').scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "nearest"
+            })
+        }, 300);
 
     }
 
@@ -134,20 +114,13 @@
         socket.close();
     }
 
-    function recv_msg_page(){
-        let sip = $.cookie('username_ip');
-        let dip = document.getElementById('dip').value;
-        let url = "http://" + sip + ":8000/show_chain_page/?sip=" + sip +"&dip=" + dip;
-        window.location.href = url;
-    }
-
 </script>
 
-<body>
-    
+<body> 
+
 <!--====================================================
-                     MAIN NAVBAR
-======================================================-->
+                         MAIN NAVBAR
+======================================================-->        
     <header class="header">
         <nav class="navbar navbar-expand-lg ">
             <div class="search-box">
@@ -390,10 +363,10 @@
     </header>
 
 <!--====================================================
-                    PAGE CONTENT
+                        PAGE CONTENT
 ======================================================-->
     <div class="page-content d-flex align-items-stretch">
-       
+
         <!--***** SIDE NAVBAR *****-->
         <nav class="side-navbar">
             <div class="sidebar-header d-flex align-items-center">
@@ -443,83 +416,101 @@
             </ul>
         </nav>
 
-        <div class="content-inner form-cont">
+        <div class="content-inner chart-cont">
+
+            <!--***** CONTENT *****-->
             <div class="row">
-                <div class="col-md-12">
 
-                    <!--***** BASIC FORM *****-->
-                    <div class="card form" id="form1">
-                        <div class="card-header">
-                            <h3>通信数据传输</h3>
+                <!--***** TIMELINE-1 *****-->
+                <div class="main-timeline" id="timeline-1">
+                    <div class="timeline" id="attention">
+                        <div class="timeline-icon"></div>
+                        <div class="timeline-content">
+                            <span class="date">ip两端报文哈希链</span>
+                            <h5 class="title">起始</h5>
+                            <p class="description">此界面展示了报文哈希链验证状态，您将会看到ip两端构成报文哈希链的相关详细内容。
+                                包括:
+                                构成报文哈希链两端的ip地址，
+                                序列号，
+                                报文哈希链节点值，
+                                消息哈希值，
+                                签名验证/报文哈希链的认证状态
+
+                            </p>
                         </div>
-                        <br>
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="dip">报文哈希链两端ip</label>
-                                        <input type="text" class="form-control" id="sip" disabled="disabled" aria-describedby="emailHelp" placeholder="{{ username_ip }}">
-                                        <input type="text" class="form-control" id="dip" aria-describedby="emailHelp" placeholder="目的ip">
-
-                                        <small id="emailHelp" class="form-text text-muted">两端ip地址构成哈希链</small>
-                                        <button type="button" class="btn btn-general btn-outline-success mr-2" onclick="recv_msg_page()">验证详情页</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="construction_method_select">哈希链构建方式</label>
-                                        <select class="form-control" id="construction_method_select">
-                                            <option value="1">基本构建方式</option>
-                                            <option value="2">共享密钥构建方式</option>
-                                            <option value="3">哈希加盐构建方式</option>
-                                            <option value="4">双向哈希构建方式</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="signature_method_select">签名方式</label>
-                                        <select class="form-control" id="signature_method_select">
-                                            <option value="1">首包签名</option>
-                                            <option value="2">尾包签名</option>
-                                            <option value="3">间隔签名</option>
-                                            <option value="4">即时签名</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="message_content">传输数据</label>
-                                        <textarea class="form-control" id="message_content" rows="3"></textarea>
-                                    </div>
-{#                                    <div class="form-group">#}
-{#                                        <label for="inputfile">上传文件</label>#}
-{#                                        <input type="file" class="form-control-file" id="inputfile" aria-describedby="fileHelp">#}
-{#                                    </div>#}
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="trans_message">交互数据</label>
-                                        <div class="form-control" id="trans_message" rows="25" style="width:565px;height:360px;overflow-x:auto;overflow-y:auto"></div>
-                                    </div>
-                                </div>
-                            </div> 
-                            <button type="button" class="btn btn-general btn-blue mr-2" onclick="sendMessage()">发送</button>
-                            <button type="button" class="btn btn-general btn-outline-danger mr-2" onclick="sendMessage_lot()">随机发送多条</button>
-                        </form>
                     </div>
-
-
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 
     <!--Global Javascript -->
     <script src="/static/index/js/jquery.min.js"></script>
-    <script src="/static/index/js/jquery.cookie.js"></script>
     <script src="/static/index/js/popper/popper.min.js"></script>
     <script src="/static/index/js/tether.min.js"></script>
     <script src="/static/index/js/bootstrap.min.js"></script>
+    <script src="/static/index/js/jquery.cookie.js"></script>
     <script src="/static/index/js/jquery.validate.min.js"></script>
     <script src="/static/index/js/chart.min.js"></script>
     <script src="/static/index/js/front.js"></script>
     
     <!--Core Javascript -->
+
+    <script>
+
+        var List = {{ chainmsg|safe }};
+        let Listlength = List.length;
+        for(let i = 0; i < Listlength; i++){
+
+            let hashchain_line = document.getElementById('timeline-1');
+            let line = document.createElement("div");
+            line.setAttribute("class", "timeline");
+            let icon = document.createElement("div");
+            icon.setAttribute("class", "time-line-icon");
+            line.appendChild(icon);
+
+            let tlcontent = document.createElement("div");
+            tlcontent.setAttribute("class", "timeline-content");
+
+            let sip_tag = document.createElement("span");
+            sip_tag.setAttribute("class", "date");
+            sip_tag.innerText = List[i]["sip"];
+
+            let dip_tag = document.createElement("span");
+            dip_tag.setAttribute("class", "date");
+            dip_tag.innerText = List[i]["dip"];
+
+            let seq_tag = document.createElement("h5");
+            seq_tag.setAttribute("class", "title");
+            seq_tag.innerText = "[序列号]:  " + List[i]["seq"];
+
+            let chainhash_tag = document.createElement("p");
+            chainhash_tag.setAttribute("class", "description");
+            chainhash_tag.innerText = "[报文哈希链节点值]: " + List[i]["chainhash"] + "\r[消息哈希值]: " + List[i]["msghash"];
+
+            {#let msghash_tag = document.createElement("p");#}
+            {#msghash_tag.setAttribute("class", "description");#}
+            {#msghash_tag.innerText = List[i]["msghash"];#}
+
+            let action_tag = document.createElement("div");
+            action_tag.setAttribute("class", "badge badge-success");
+            action_tag.innerText = List[i]["action"];
+
+            tlcontent.appendChild(sip_tag);
+            tlcontent.appendChild(dip_tag);
+            tlcontent.appendChild(seq_tag);
+            tlcontent.appendChild(chainhash_tag);
+            tlcontent.appendChild(action_tag);
+
+            line.appendChild(tlcontent);
+
+            hashchain_line.appendChild(line);
+        }
+
+    </script>
+
+
+
     <script>
         new Chart(document.getElementById("myChart-nav").getContext('2d'), {
           type: 'doughnut',
@@ -547,6 +538,7 @@
             }
         });
     </script>
+
 
 </body>
 

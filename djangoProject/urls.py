@@ -22,4 +22,5 @@ urlpatterns = [
     path('phc/',include("phc.urls")),
     path('',include("mgr.urls")),
     path('trans_page/',views.trans_page),
+    path('show_chain_page/',views.show_chain_page),
 ]

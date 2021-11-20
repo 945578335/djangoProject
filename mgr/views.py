@@ -15,6 +15,7 @@ def login(request):
     sip = host[0]
     print(sip)
     return render(request, 'login.html')
+
 def register(request):
     return render(request, 'register.html')
 
@@ -30,9 +31,10 @@ def uselogin(request):
            verify = models.PhcUser.objects.get(username=action['usename'])
            if verify.password == action['password']:
                if verify.action == int(action['usertype']):
-                   request.session['ip'] = "19216801"
-                   request.session['username'] = verify.username
-                   return render(request, 'index.html',{'username':verify.username, 'ip':sip, 'roomnum':'19216801'})
+                   request.session['roomnum'] = "19216801"
+                   request.session['ip'] = verify.username
+                   request.session['username_ip'] = verify.username
+                   return render(request, 'index.html',{'username_ip':verify.username, 'ip':sip, 'roomnum':'19216801'})
                else:
                    return render(request, 'login.html', {'erro3': login3})
            else:
@@ -62,6 +64,4 @@ def useregister(request):
     else:
        return HttpResponse("注册失败")
 
-def get_username():
-    return USERNAME
 

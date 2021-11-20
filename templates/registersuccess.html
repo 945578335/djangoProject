@@ -18,13 +18,14 @@
 <link rel="stylesheet" href="/static/css/helpers.css">
 <link rel="stylesheet" href="/static/css/style.css">
 <link rel="stylesheet" href="/static/css/landing-2.css">
+    <script src="/static/js/jquery.min.js"></script>
 </head>
 
 <body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
 
 <nav class="navbar navbar-expand-lg navbar-dark pb_navbar pb_scrolled-light" id="pb-navbar">
   <div class="container">
-      <a class="navbar-brand" href="http://127.0.0.1:8000">点击返回登录页面</a>
+      <a class="navbar-brand" id="back_login">点击返回登录页面</a>
 	<button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#probootstrap-navbar" aria-controls="probootstrap-navbar" aria-expanded="false" aria-label="Toggle navigation">
 	  <span><i class="ion-navicon"></i></span>
 	</button>
@@ -48,7 +49,7 @@
   <div class="container">
 	<div class="row">
 	  <div class="col text-center">
-		<p class="pb_font-14">Copyright &copy; 2021.bistu 北信科队</p>
+		<p class="pb_font-14"></p>
 	  </div>
 	</div>
   </div>
@@ -57,7 +58,14 @@
 <!-- loader -->
 <div id="pb_loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#1d82ff"/></svg></div>
 
+<script>
 
+    var pageurl = window.location.host;
+    $("#back_login").attr('href','/');
+    {#document.getElementById('#form_id').setAttribute('action', `${pageurl}/login/`)#}
+    {#action="http://{{ ip }}:8000/login/"#}
+
+</script>
 
 <script src="/static/js/jquery.min.js"></script>
 

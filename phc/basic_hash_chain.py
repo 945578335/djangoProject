@@ -1,5 +1,8 @@
 from phc import sm3
 
+salt = "453245b037ea9220b49395e65954411ad156bcc1dddf712863f2c8ecfcb22dc4"
+share_key = "3245b037ea9220b49395e65954411ad156bcc1dddf712863f2c8ecfcb22dc445"
+
 class Node(object):
     def __init__(self, packet_hash, hash_chain, sequence):
         self.packet_hash = packet_hash
@@ -11,7 +14,7 @@ class Node(object):
 class Hash_Chain(object):
     def __init__(self):
         self.header = None
-        self.length = 0
+        self.length = -1
 
 
     # 1、判断是否为空
@@ -75,29 +78,46 @@ class Hash_Chain(object):
             current_Node.element = num
 
     def get_final_hash_chain_node(self):
-        print(self.header.hash_chain)
         return self.header.hash_chain
+
+    def get_final_sequence(self):
+        return self.header.sequence
+
+    def get_final_pkthash(self):
+        return self.header.packet_hash
 
 def init_hash_chain(hash_chain):
     register = "register"
     register_b = bytes(register, encoding='utf-8')
     register_hash = sm3.sm3_hash(register_b)
-    node = Node(register_hash, register_hash, 1)
+    node = Node(register_hash, register_hash, 0)
     hash_chain.insert(node)
     return hash_chain
 
+def continue_hashchain(hash_chain, final_node, content, sequence):
+
+    content_b = bytes(content, encoding='utf-8')
+    content_hash = sm3.sm3_hash(content_b)
+    merge_hash_b = bytes(final_node + content_hash, encoding='utf-8')
+    chain_hash = sm3.sm3_hash(merge_hash_b)
+    node = Node(content_hash, chain_hash, sequence)
+    hash_chain.insert(node)
+
+
 def basic_hash_chain_construction(message, hash_chain):
+    print(message)
     message_b = bytes(message, encoding='utf-8')
     message_hash = sm3.sm3_hash(message_b)
     merge_hash = hash_chain.header.hash_chain+message_hash
+    print(merge_hash)
     merge_hash_b = bytes(merge_hash, encoding='utf-8')
     new_hash_chain = sm3.sm3_hash(merge_hash_b)
-    node = Node(message_hash, new_hash_chain, hash_chain.length+1)
+    node = Node(message_hash, new_hash_chain, hash_chain.header.sequence+1)
     hash_chain.insert(node)
 
 
-def pk_hash_chain_construction(message, hash_chain, pk):
-    message_b = bytes(message+pk, encoding='utf-8')
+def pk_hash_chain_construction(message, hash_chain):
+    message_b = bytes(message+share_key, encoding='utf-8')
     message_hash = sm3.sm3_hash(message_b)
     merge_hash = hash_chain.header.hash_chain+message_hash
     merge_hash_b = bytes(merge_hash, encoding='utf-8')
@@ -105,7 +125,7 @@ def pk_hash_chain_construction(message, hash_chain, pk):
     node = Node(message_hash, new_hash_chain, hash_chain.length+1)
     hash_chain.insert(node)
 
-def salt_hash_chain_construction(message, hash_chain, salt):
+def salt_hash_chain_construction(message, hash_chain):
     message_b = bytes(message, encoding='utf-8')
     message_hash = sm3.sm3_hash(message_b)
     merge_hash = hash_chain.header.hash_chain+message_hash+salt
@@ -120,7 +140,7 @@ if __name__ == '__main__':
 
     init_hash_chain(hash_chain)
 
-    message = "111"
+    message = "123"
 
     for i in range(100):
         basic_hash_chain_construction(message, hash_chain)

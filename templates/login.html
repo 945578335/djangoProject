@@ -79,7 +79,7 @@
 		  </div>
 		  <div class="form-group">
 			<input type="submit" class="btn btn-primary btn-lg btn-block pb_btn-pill  btn-shadow-blue" value="登录">
-              <div style="float: left"><a href="http://{{ ip }}:8000/register/" style="color: black">注册</a></div>
+              <div style="float: left"><a id="reg_a" style="color: black">注册</a></div>
               <div style="float: right"><a style="color: black">忘记密码</a></div>
 
           </div>
@@ -256,6 +256,7 @@
 
     var pageurl = window.location.host;
     $("#form_id").attr('action','/login/');
+    $("#reg_a").attr('href','/register/');
     {#document.getElementById('#form_id').setAttribute('action', `${pageurl}/login/`)#}
     {#action="http://{{ ip }}:8000/login/"#}
 
