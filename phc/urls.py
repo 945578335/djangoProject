@@ -1,5 +1,5 @@
 from django.urls import path
-from phc import views
+from phc import views, inquiry
 
 urlpatterns = [
     path('phcindex/',views.indexshow),
@@ -32,6 +32,8 @@ urlpatterns = [
     path('phcinterval2/', views.intervalshow2),
 
     path('datashow_page/', views.datashow_page),
+    path('inquiry_page/', inquiry.inquiry_page),
+    path('inquiry/', inquiry.inquiry),
     path('message_trace/', views.message_trace),
     path('trace/', views.trace),
 

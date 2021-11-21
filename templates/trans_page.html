@@ -54,7 +54,7 @@
         name.innerText = "[" + json_message['username_ip'] + "]" + ": " + json_message['content'];
         final_node.innerText = "[Hash_Chain]" + ": " + json_message['final_node'];
         hashchain.setAttribute("class", "badge badge-success");
-        hashchain.innerText = "Hash_Chain_Verified";
+        hashchain.innerText = "哈希链验证成功";
 
         div.appendChild(name);
         div.appendChild(final_node);
@@ -63,12 +63,12 @@
         if(json_message['signature_txt'] != ""){
 
             let signature = document.createElement("label");
-            signature.setAttribute("class", "badge badge-success");
+            signature.setAttribute("class", "badge badge-info");
 
             let signature_txt = document.createElement("div");
             signature_txt.innerText = "[Signature]" + ": " + json_message['signature_txt'];
 
-            signature.innerText = "Signature_Verified";
+            signature.innerText = "链式签名验证成功";
             div.appendChild(signature_txt);
             div.appendChild(signature);
 
@@ -122,6 +122,7 @@
             random_str = randomString();
             let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':random_str, 'sig_opt':sig_opt.val(), 'con_opt': con_opt.val()}
             socket.send(JSON.stringify(json_message));
+            setTimeout(function (){console.log("111");}, 2000);
             i ++;
         }
         dip.removeAttribute("disabled");
@@ -135,9 +136,9 @@
     }
 
     function recv_msg_page(){
-        let sip = $.cookie('username_ip');
+        let sip = document.getElementById('sip').getAttribute("placeholder");
         let dip = document.getElementById('dip').value;
-        let url = "http://" + sip + ":8000/show_chain_page/?sip=" + sip +"&dip=" + dip;
+        let url = "http://" + "{{ ip }}" + ":8000/show_chain_page/?sip=" + sip +"&dip=" + dip;
         window.location.href = url;
     }
 

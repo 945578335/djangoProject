@@ -1,4 +1,5 @@
 import json
+import time
 
 from channels.exceptions import StopConsumer
 from channels.generic.websocket import WebsocketConsumer
@@ -22,7 +23,7 @@ hash_chain_p = {}
 global sig_sign
 sig_sign = True
 global interval_num
-interval_num = 100
+interval_num = 10
 global sig_method
 sig_method = "0"
 
@@ -43,15 +44,8 @@ class ChatConsumer(WebsocketConsumer):
         raise StopConsumer()
 
     def websocket_receive(self, message):
-        print("recv///////////////////////////////////////////////////////")
-        group = self.scope["url_route"]["kwargs"].get("group")
-        print("recv///////////////////////////////////////////////////////2")
-        async_to_sync(self.channel_layer.group_send)(group, {"type": "message.send", "message": message})
-        print("recv///////////////////////////////////////////////////////3")
 
-    def message_send(self, event):
-        # json_event = json.loads(event)
-        text = event["message"]["text"]
+        text = message["text"]
         json_text = json.loads(text)
         username_ip = json_text["sip"]
         dip = json_text["dip"]
@@ -110,7 +104,7 @@ class ChatConsumer(WebsocketConsumer):
         global sig_method
         global interval_num
 
-        action = "Hash_Chain_Verified"
+        action = "报文哈希链验证成功"
         if sig_method == "2" and sig_opt != "2":
             sig_sign = True
         else:
@@ -126,7 +120,7 @@ class ChatConsumer(WebsocketConsumer):
                 interval_num = interval_num - 1
                 if interval_num == 0:
                     sig_sign = True
-                    interval_num = 100
+                    interval_num = 10
                 else:
                     sig_sign = False
                 sig_method = sig_opt
@@ -136,11 +130,12 @@ class ChatConsumer(WebsocketConsumer):
 
         if sig_sign == True:
             signature_txt = sm2.sm2_encrypt(content)
-            action = "Signature_Verified"
+            action = "链式签名验证成功"
 
         if con_opt == "1":
             models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node, action=action)
+                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
+                                            action=action)
         elif con_opt == "2":
             models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
                                             signtype=sig_opt, content=content, msghash=pkt_hash,
@@ -151,13 +146,25 @@ class ChatConsumer(WebsocketConsumer):
                                             chainhash=final_node, salt=salt, action=action)
         elif con_opt == "4":
             models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node, action=action)
+                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
+                                            action=action)
         else:
             models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node, action=action)
+                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
+                                            action=action)
 
         json_message = {"username_ip": username_ip, "content": content, "final_node": final_node,
-                        "signature_txt": signature_txt, "seq_s":final_seq, "action_s":action, "msghash_s":pkt_hash,
-                        "chainhash_s":final_node}
-        print("json_message:  ", json_message)
-        self.send(json.dumps(json_message))
+                        "signature_txt": signature_txt, "seq_s": final_seq, "action_s": action, "msghash_s": pkt_hash,
+                        "chainhash_s": final_node}
+
+
+
+        group = self.scope["url_route"]["kwargs"].get("group")
+        async_to_sync(self.channel_layer.group_send)(group, {"type": "message.send", "message": json_message})
+        time.sleep(1)
+
+    def message_send(self, event):
+        # json_event = json.loads(event)
+        message = event["message"]
+
+        self.send(json.dumps(message))
