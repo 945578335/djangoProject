@@ -293,25 +293,10 @@
             <ul class="list-unstyled">
 
                 <li> <a href="http://{{ ip }}:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
-                <li> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>传输</a></li>
-                <li> <a href="http://{{ ip }}:8000/phc/inquiry/"><i class="fa fa-building-o"></i>查询功能</a></li>
-                <li><a href="#construction_method" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>构建方法 </a>
-                    <ul id="construction_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/basic_hash_index/">基本构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
-                    </ul>
-                </li>
-                <li><a href="#signature_method" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-building-o"></i>签名方法 </a>
-                    <ul id="signature_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/first_sign_index/">首包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/final_sign_index/">尾包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/interval_sign_index/">固定间隔签名</a></li>
-                    </ul>
-                </li>
-                <li class="active"> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
-                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
+                <li> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>链式签名认证</a></li>
+                <li class="active"> <a href="http://{{ ip }}:8000/phc/inquiry_page/"><i class="fa fa-building-o"></i>查询功能</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>性能测试展示</a></li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
@@ -456,73 +441,69 @@
             }
         });
     </script>
+
     <script>
-    let tbody = document.getElementById("tbody");
+        function load_table(List, i){
 
+            let tbody = document.getElementById("tbody");
+            let tr = document.createElement("tr");
+            tr.setAttribute("class", "table-warning");
 
-         let tr1 = document.createElement("tr");
-         tr1.setAttribute("class", "table-warning");
+            let th = document.createElement("th");
+            th.setAttribute("scope", "row");
+            th.innerText = i;
 
-         let th1 = document.createElement("th");
-         th1.setAttribute("scope", "row");
+            let item_sip = document.createElement("td");
+            item_sip.innerText = List.sip;
 
-         let item_sip = document.createElement("td");
+            let item_dip = document.createElement("td");
+            item_dip.innerText = List.dip;
 
-         let item_dip = document.createElement("td");
-
-         let contype = document.createElement("td");
-
-         let signtype = document.createElement("td");
-
-         let a_href = document.createElement("td");
-         let href = document.createElement("a");
-
-        {% for item in results %}
-
-
-
-         th1.innerText = "#";
-
-
-         item_sip.innerText = "{{ item.sip }}";
-
-
-         item_dip.innerText = "{{ item.dip }}";
-
-
-         if("{{ item.contype }}" == 1){
+            let contype = document.createElement("td");
+            if(List.contype == 1){
              contype.innerText = "基本构建方法";
-         }else if("{{ item.contype }}" == 2){
+            }else if(List.contype == 2){
              contype.innerText = "共享密钥构建方法";
-         }else if("{{ item.contype }}" == 3){
+            }else if(List.contype == 3){
              contype.innerText = "哈希加盐构建方法";
-         }else if("{{ item.contype }}" == 4){
+            }else if(List.contype == 4){
              contype.innerText = "双向哈希构建方法";
-         }
+            }
 
-         if("{{ item.signtype }}" == 1){
+            let signtype = document.createElement("td");
+            if(List.signtype == 1){
              signtype.innerText = "首包签名";
-         }else if("{{ item.signtype }}" == 2){
+            }else if(List.signtype == 2){
              signtype.innerText = "尾包签名";
-         }else if("{{ item.signtype }}" == 3){
+            }else if(List.signtype == 3){
               signtype.innerText = "固定间隔签名";
-         }
+            }
 
+            let a_href = document.createElement("td");
+            let href = document.createElement("a");
+            href.innerText = "查看";
+            href.setAttribute("href", "http://" + "{{ ip }}" + ":8000/show_chain_page/?sip=" + List.sip +"&dip=" + List.dip);
+            a_href.appendChild(href);
 
-         href.innerText = "查看";
-         a_href.appendChild(href);
+            tr.appendChild(th);
+            tr.appendChild(item_sip);
+            tr.appendChild(item_dip);
+            tr.appendChild(contype);
+            tr.appendChild(signtype);
+            tr.appendChild(a_href);
 
-         tr1.appendChild(th1);
-         tr1.appendChild(item_sip);
-         tr1.appendChild(item_dip);
-         tr1.appendChild(contype);
-         tr1.appendChild(signtype);
-         tr1.appendChild(a_href);
+            tbody.appendChild(tr);
 
-         tbody.appendChild(tr1);
+        }
+    </script>
 
-        {% endfor %}
+    <script>
 
+        let List = {{ results|safe }};
+        let length = List.length;
+        for (let i = 1; i <= length; i++){
+            load_table(List[i-1], i);
+        }
 
     </script>
 

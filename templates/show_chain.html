@@ -30,6 +30,38 @@
         .row{
             margin-left: 0px;
         }
+
+        @keyframes fade {
+            from {
+                opacity: 1.0;
+            }
+            50% {
+                opacity: 0.4;
+            }
+            to {
+                opacity: 1.0;
+            }
+        }
+        @-webkit-keyframes fade {
+            from {
+                opacity: 1.0;
+            }
+            50%{
+                opacity: 0.4;
+            }
+            to {
+                opacity: 1.0;
+            }
+        }
+
+        #anchor {
+            color: #00ff00;
+            animation: fade 500ms infinite;
+            -webkit-animation: fade 600ms 5;
+        }
+
+
+
     </style>
 </head>
 
@@ -38,7 +70,7 @@
     console.log($.cookie('username_ip'));
     console.log($.cookie('ip'));
 
-    var socket = new WebSocket("ws://{{ sip }}:8000/chatchannel/{{ roomnum }}/");
+    var socket = new WebSocket("ws://{{ ip }}:8000/chatchannel/{{ roomnum }}/");
 
     socket.onopen = function (event){
 
@@ -385,24 +417,10 @@
             <ul class="list-unstyled">
 
                 <li> <a href="http://{{ ip }}:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
-                <li class="active"> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>传输</a></li>
-                <li><a href="#construction_method" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>构建方法 </a>
-                    <ul id="construction_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/basic_hash_index/">基本构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
-                    </ul>
-                </li>
-                <li><a href="#signature_method" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-building-o"></i>签名方法 </a>
-                    <ul id="signature_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/first_sign_index/">首包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/final_sign_index/">尾包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/interval_sign_index/">固定间隔签名</a></li>
-                    </ul>
-                </li>
+                <li> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>链式签名认证</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/inquiry_page/"><i class="fa fa-building-o"></i>查询功能</a></li>
                 <li> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
-                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>性能测试展示</a></li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
@@ -465,9 +483,10 @@
 
         var List = {{ chainmsg|safe }};
         let Listlength = List.length;
+        let hashchain_line = document.getElementById('timeline-1');
         for(let i = 0; i < Listlength; i++){
 
-            let hashchain_line = document.getElementById('timeline-1');
+
             let line = document.createElement("div");
             line.setAttribute("class", "timeline");
             let icon = document.createElement("div");
@@ -507,10 +526,23 @@
             tlcontent.appendChild(chainhash_tag);
             tlcontent.appendChild(action_tag);
 
+
             line.appendChild(tlcontent);
+
+            if("{{ anchor }}" == List[i]["chainhash"]){
+                line.setAttribute("id", "anchor");
+            }
 
             hashchain_line.appendChild(line);
         }
+
+        setTimeout(function (){
+            document.querySelector('#anchor').scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "nearest"
+            })
+        }, 300);
 
     </script>
 

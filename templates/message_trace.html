@@ -293,24 +293,10 @@
             <ul class="list-unstyled">
 
                 <li> <a href="http://{{ ip }}:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
-                <li> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>传输</a></li>
-                <li><a href="#construction_method" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>构建方法 </a>
-                    <ul id="construction_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/basic_hash_index/">基本构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
-                    </ul>
-                </li>
-                <li><a href="#signature_method" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-building-o"></i>签名方法 </a>
-                    <ul id="signature_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/first_sign_index/">首包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/final_sign_index/">尾包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/interval_sign_index/">固定间隔签名</a></li>
-                    </ul>
-                </li>
+                <li> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>链式签名认证</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/inquiry_page/"><i class="fa fa-building-o"></i>查询功能</a></li>
                 <li class="active"> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
-                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>性能测试展示</a></li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
@@ -343,25 +329,25 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="dip">查询ip地址</label>
-                                        <input type="text" class="form-control" id="dip" name="dip" aria-describedby="emailHelp" value="{{ ip }}">
-                                        <small id="emailHelp" class="form-text text-muted">查询此ip的哈希链</small>
+                                        <label for="sip">报文哈希链发送端ip地址</label>
+                                        <input type="text" class="form-control" id="sip" name="sip" aria-describedby="emailHelp" value="{{ ip }}" disabled="disabled">
+{#                                        <small id="emailHelp" class="form-text text-muted">查询此ip的哈希链</small>#}
                                     </div>
                                     <div class="form-group">
-                                        <label for="dip">查询id地址</label>
-                                        <input type="text" class="form-control" id="username_id" name="username_id" aria-describedby="emailHelp" value="{{ username }}">
-                                        <small id="emailHelp" class="form-text text-muted">查询此id的哈希链</small>
+                                        <label for="dip">报文哈希链接收端ip地址</label>
+                                        <input type="text" class="form-control" id="dip" name="dip" aria-describedby="emailHelp" required="required">
+{#                                        <small id="emailHelp" class="form-text text-muted">查询此id的哈希链</small>#}
                                     </div>
                                     <div class="form-group">
-                                        <label for="dip">查询报文哈希链节点值</label>
+                                        <label for="trace_message">需要追溯的报文哈希链节点值</label>
                                         <input type="text" class="form-control" id="trace_message" name="trace_message" aria-describedby="emailHelp" required="required">
-                                        <small id="emailHelp" class="form-text text-muted">报文哈希链内容</small>
+                                        <small id="emailHelp" class="form-text text-muted">报文哈希链节点值内容</small>
                                     </div>
                                 </div>
                             </div>
                             <lable id="trace_message_show"></lable>
                             <div></div>
-                            <button type="submit" class="btn btn-general btn-blue mr-2">追溯</button>
+                            <button type="submit" class="btn btn-general btn-blue mr-2">链式追溯</button>
 
                         </form>
                     </div>
@@ -414,14 +400,9 @@
     <script>
 
         let trace_div = document.getElementById("trace_message_show");
-        trace_div.setAttribute("id", "trace_lab");
-        if("{{ trace_message }}" != "无法追溯"){
-            trace_div.setAttribute("class", "badge badge-success");
-        }
-        else {
-            trace_div.setAttribute("class", "badge badge-danger");
-        }
+        trace_div.setAttribute("class", "badge badge-danger");
         trace_div.innerText = "{{ trace_message }}";
+        alert("{{ trace_message }}")
 
     </script>
 </body>

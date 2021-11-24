@@ -50,28 +50,36 @@
         let hashchain = document.createElement("label");
 
         let json_message = JSON.parse(event.data);
+        if(json_message["action_s"] != ""){
+            name.innerText = "[" + json_message['username_ip'] + "]" + ": " + json_message['content'];
+            final_node.innerText = "[Hash_Chain]" + ": " + json_message['final_node'];
+            hashchain.setAttribute("class", "badge badge-success");
+            hashchain.innerText = "哈希链验证成功";
 
-        name.innerText = "[" + json_message['username_ip'] + "]" + ": " + json_message['content'];
-        final_node.innerText = "[Hash_Chain]" + ": " + json_message['final_node'];
-        hashchain.setAttribute("class", "badge badge-success");
-        hashchain.innerText = "哈希链验证成功";
+            div.appendChild(name);
+            div.appendChild(final_node);
+            div.appendChild(hashchain);
 
-        div.appendChild(name);
-        div.appendChild(final_node);
-        div.appendChild(hashchain);
+            if(json_message['signature_txt'] != ""){
 
-        if(json_message['signature_txt'] != ""){
+                let signature = document.createElement("label");
+                signature.setAttribute("class", "badge badge-info");
 
-            let signature = document.createElement("label");
-            signature.setAttribute("class", "badge badge-info");
+                let signature_txt = document.createElement("div");
+                signature_txt.innerText = "[Signature]" + ": " + json_message['signature_txt'];
 
-            let signature_txt = document.createElement("div");
-            signature_txt.innerText = "[Signature]" + ": " + json_message['signature_txt'];
+                signature.innerText = "链式签名验证成功";
+                div.appendChild(signature_txt);
+                div.appendChild(signature);
 
-            signature.innerText = "链式签名验证成功";
-            div.appendChild(signature_txt);
-            div.appendChild(signature);
+            }
 
+        }else {
+            name.innerText = "[" + json_message['username_ip'] + "]";
+            hashchain.setAttribute("class", "badge badge-danger");
+            hashchain.innerText = "报文哈希链验证失败！！！";
+            div.appendChild(name);
+            div.appendChild(hashchain);
         }
 
         let itv =  document.createElement("div");
@@ -85,13 +93,20 @@
     function sendMessage(){
         let dip = document.getElementById('dip');
         let tag = document.getElementById('message_content');
-        if(tag.value != ""){
-            let sig_opt = $("#signature_method_select option:selected");
+        let sig_opt = document.getElementById("sig_method_opt");
+
+        if(tag.value == ""){
+            alert("请输入传输内容！");
+        }else if (sig_opt.value == ""){
+            alert("请选择链式签名方式！");
+        }else{
             let con_opt = $("#construction_method_select option:selected");
-            let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':tag.value, 'sig_opt':sig_opt.val(), 'con_opt': con_opt.val()}
+            let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':tag.value, 'sig_opt':sig_opt.value, 'con_opt': con_opt.val()}
             socket.send(JSON.stringify(json_message));
             tag.value = "";
         }
+
+
     }
 
     function randomString() {
@@ -105,30 +120,33 @@
 
     function sendMessage_lot(){
 
+        let sig_opt = document.getElementById("sig_method_opt");
+        if (sig_opt.value == ""){
+            alert("请选择链式签名方法！");
+        }else {
+            let dip = document.getElementById('dip');
+            dip.setAttribute("disabled", "disabled");
 
-        let dip = document.getElementById('dip');
-        dip.setAttribute("disabled", "disabled");
+            {#let sig_slt = document.getElementById('signature_method_select');#}
+            {#sig_slt.setAttribute("disabled", "disabled");#}
 
-        let sig_slt = document.getElementById('signature_method_select');
-        sig_slt.setAttribute("disabled", "disabled");
+            let con_slt = document.getElementById('construction_method_select');
+            con_slt.setAttribute("disabled", "disabled");
 
-        let con_slt = document.getElementById('construction_method_select');
-        con_slt.setAttribute("disabled", "disabled");
 
-        let sig_opt = $("#signature_method_select option:selected");
-        let con_opt = $("#construction_method_select option:selected");
-        var i = 0;
-        while (i <1000){
-            random_str = randomString();
-            let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':random_str, 'sig_opt':sig_opt.val(), 'con_opt': con_opt.val()}
-            socket.send(JSON.stringify(json_message));
-            setTimeout(function (){console.log("111");}, 2000);
-            i ++;
+            let con_opt = $("#construction_method_select option:selected");
+            var i = 0;
+            while (i <1000){
+                random_str = randomString();
+                let json_message = {"sip":$.cookie('username_ip'), "dip":dip.value, 'content':random_str, 'sig_opt':sig_opt.value, 'con_opt': con_opt.val()}
+                socket.send(JSON.stringify(json_message));
+                setTimeout(function (){console.log("111");}, 2000);
+                i ++;
+            }
+            dip.removeAttribute("disabled");
+            {#sig_slt.removeAttribute("disabled");#}
+            con_slt.removeAttribute("disabled");
         }
-        dip.removeAttribute("disabled");
-        sig_slt.removeAttribute("disabled");
-        con_slt.removeAttribute("disabled");
-
     }
 
     function closeMessage(){
@@ -408,24 +426,10 @@
             <ul class="list-unstyled">
 
                 <li> <a href="http://{{ ip }}:8000/phc/phcindex/"><i class="icon-home"></i>简介</a></li>
-                <li class="active"> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>传输</a></li>
-                <li><a href="#construction_method" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>构建方法 </a>
-                    <ul id="construction_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/basic_hash_index/">基本构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/share_hash_index/">共享密钥构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/salt_hash_index/">哈希加盐构建方法</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/mutual_hash_index/">双向哈希构建方法</a></li>
-                    </ul>
-                </li>
-                <li><a href="#signature_method" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-building-o"></i>签名方法 </a>
-                    <ul id="signature_method" class="collapse list-unstyled">
-                        <li><a href="http://{{ ip }}:8000/phc/first_sign_index/">首包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/final_sign_index/">尾包签名</a></li>
-                        <li><a href="http://{{ ip }}:8000/phc/interval_sign_index/">固定间隔签名</a></li>
-                    </ul>
-                </li>
+                <li class="active"> <a href="http://{{ ip }}:8000/trans_page/?hashchain={{ roomnum }}/"><i class="fa fa-globe"></i>链式签名认证</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/inquiry_page/"><i class="fa fa-building-o"></i>查询功能</a></li>
                 <li> <a href="http://{{ ip }}:8000/phc/message_trace/"><i class="fa fa-map"></i>链式追溯</a></li>
-                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>指标展示</a></li>
+                <li> <a href="http://{{ ip }}:8000/phc/datashow_page/"><i class="fa fa-bar-chart"></i>性能测试展示</a></li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
                 <li><i class=""></i> </li>
@@ -451,22 +455,31 @@
                     <!--***** BASIC FORM *****-->
                     <div class="card form" id="form1">
                         <div class="card-header">
-                            <h3>通信数据传输</h3>
+                            <h3>链式签名认证</h3>
+
+                                <button type="button" class="btn btn-general btn-outline-secondary mr-2" id="sig_method_1" onclick="sig_first()">首包签名</button>
+                                <button type="button" class="btn btn-general btn-outline-secondary mr-2" id="sig_method_2" onclick="sig_final()">尾包签名</button>
+                                <button type="button" class="btn btn-general btn-outline-secondary mr-2" id="sig_method_3" onclick="sig_interval()">间隔签名</button>
+                                <button type="button" class="btn btn-general btn-outline-secondary mr-2" id="sig_method_4" onclick="sig_need()">按需签名</button>
+
                         </div>
                         <br>
                         <form>
+
+                            <span>&nbsp</span>
                             <div class="row">
-                                <div class="col-md-6">
+
+                                <div class="col-md-6" id="color_ban">
                                     <div class="form-group">
-                                        <label for="dip">报文哈希链两端ip</label>
+                                        <label for="dip" id="label_1">报文哈希链两端ip</label>
                                         <input type="text" class="form-control" id="sip" disabled="disabled" aria-describedby="emailHelp" placeholder="{{ username_ip }}">
                                         <input type="text" class="form-control" id="dip" aria-describedby="emailHelp" placeholder="目的ip">
 
-                                        <small id="emailHelp" class="form-text text-muted">两端ip地址构成哈希链</small>
-                                        <button type="button" class="btn btn-general btn-outline-success mr-2" onclick="recv_msg_page()">验证详情页</button>
+                                        <small id="label_2" class="form-text text-muted">两端ip地址构成哈希链</small>
+                                        <button type="button" class="btn btn-general btn-outline-info mr-2" onclick="recv_msg_page()">验证详情页</button>
                                     </div>
                                     <div class="form-group">
-                                        <label for="construction_method_select">哈希链构建方式</label>
+                                        <label for="construction_method_select" id="label_3">哈希链构建方式</label>
                                         <select class="form-control" id="construction_method_select">
                                             <option value="1">基本构建方式</option>
                                             <option value="2">共享密钥构建方式</option>
@@ -475,16 +488,17 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="signature_method_select">签名方式</label>
-                                        <select class="form-control" id="signature_method_select">
-                                            <option value="1">首包签名</option>
-                                            <option value="2">尾包签名</option>
-                                            <option value="3">间隔签名</option>
-                                            <option value="4">即时签名</option>
-                                        </select>
+{#                                        <label for="signature_method_select">签名方式</label>#}
+{#                                        <select class="form-control" id="signature_method_select">#}
+{#                                            <option value="1">首包签名</option>#}
+{#                                            <option value="2">尾包签名</option>#}
+{#                                            <option value="3">间隔签名</option>#}
+{#                                            <option value="4">即时签名</option>#}
+{#                                        </select>#}
+                                        <input id="sig_method_opt">
                                     </div>
                                     <div class="form-group">
-                                        <label for="message_content">传输数据</label>
+                                        <label for="message_content" id="label_4">传输数据</label>
                                         <textarea class="form-control" id="message_content" rows="3"></textarea>
                                     </div>
 {#                                    <div class="form-group">#}
@@ -494,13 +508,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="trans_message">交互数据</label>
+                                        <label for="trans_message" id="label_5">交互数据</label>
                                         <div class="form-control" id="trans_message" rows="25" style="width:565px;height:360px;overflow-x:auto;overflow-y:auto"></div>
                                     </div>
                                 </div>
                             </div> 
-                            <button type="button" class="btn btn-general btn-blue mr-2" onclick="sendMessage()">发送</button>
-                            <button type="button" class="btn btn-general btn-outline-danger mr-2" onclick="sendMessage_lot()">随机发送多条</button>
+                            <button type="button" class="btn btn-general btn-outline-info mr-2" onclick="sendMessage()">发送</button>
+                            <button type="button" class="btn btn-general btn-outline-info mr-2" onclick="sendMessage_lot()">随机发送多条</button>
                         </form>
                     </div>
 
@@ -547,6 +561,91 @@
                } 
             }
         });
+    </script>
+
+    <script>
+        document.querySelector("#sig_method_opt").style.visibility = "hidden";
+    </script>
+
+    <script>
+
+        function sig_first(){
+            let sig_method_opt = document.getElementById("sig_method_opt");
+            sig_method_opt.setAttribute("value", "1");
+            let sig_method_1 = document.getElementById("sig_method_1");
+            sig_method_1.setAttribute("class", "btn btn-general btn-outline-primary mr-2");
+            let sig_method_2 = document.getElementById("sig_method_2");
+            sig_method_2.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_3 = document.getElementById("sig_method_3");
+            sig_method_3.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_4 = document.getElementById("sig_method_4");
+            sig_method_4.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+
+            document.getElementById("label_1").style.color = "#007BFF";
+            document.getElementById("label_2").style.color = "#007BFF";
+            document.getElementById("label_3").style.color = "#007BFF";
+            document.getElementById("label_4").style.color = "#007BFF";
+            document.getElementById("label_5").style.color = "#007BFF";
+
+        }
+
+        function sig_final(){
+            let sig_method_opt = document.getElementById("sig_method_opt");
+            sig_method_opt.setAttribute("value", "2");
+            let sig_method_1 = document.getElementById("sig_method_1");
+            sig_method_1.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_2 = document.getElementById("sig_method_2");
+            sig_method_2.setAttribute("class", "btn btn-general btn-outline-success mr-2");
+            let sig_method_3 = document.getElementById("sig_method_3");
+            sig_method_3.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_4 = document.getElementById("sig_method_4");
+            sig_method_4.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+
+            document.getElementById("label_1").style.color = "#28A745";
+            document.getElementById("label_2").style.color = "#28A745";
+            document.getElementById("label_3").style.color = "#28A745";
+            document.getElementById("label_4").style.color = "#28A745";
+            document.getElementById("label_5").style.color = "#28A745";
+        }
+
+        function sig_interval(){
+            let sig_method_opt = document.getElementById("sig_method_opt");
+            sig_method_opt.setAttribute("value", "3");
+            let sig_method_1 = document.getElementById("sig_method_1");
+            sig_method_1.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_2 = document.getElementById("sig_method_2");
+            sig_method_2.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_3 = document.getElementById("sig_method_3");
+            sig_method_3.setAttribute("class", "btn btn-general btn-outline-warning mr-2");
+            let sig_method_4 = document.getElementById("sig_method_4");
+            sig_method_4.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+
+            document.getElementById("label_1").style.color = "#FFC107";
+            document.getElementById("label_2").style.color = "#FFC107";
+            document.getElementById("label_3").style.color = "#FFC107";
+            document.getElementById("label_4").style.color = "#FFC107";
+            document.getElementById("label_5").style.color = "#FFC107";
+        }
+
+        function sig_need(){
+            let sig_method_opt = document.getElementById("sig_method_opt");
+            sig_method_opt.setAttribute("value", "4");
+            let sig_method_1 = document.getElementById("sig_method_1");
+            sig_method_1.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_2 = document.getElementById("sig_method_2");
+            sig_method_2.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_3 = document.getElementById("sig_method_3");
+            sig_method_3.setAttribute("class", "btn btn-general btn-outline-info mr-2");
+            let sig_method_4 = document.getElementById("sig_method_4");
+            sig_method_4.setAttribute("class", "btn btn-general btn-outline-danger mr-2");
+
+            document.getElementById("label_1").style.color = "#DC3545";
+            document.getElementById("label_2").style.color = "#DC3545";
+            document.getElementById("label_3").style.color = "#DC3545";
+            document.getElementById("label_4").style.color = "#DC3545";
+            document.getElementById("label_5").style.color = "#DC3545";
+        }
+
     </script>
 
 </body>

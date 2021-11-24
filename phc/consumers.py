@@ -30,10 +30,15 @@ sig_method = "0"
 global msg_content_flag
 msg_content_flag = ""
 
+global user_num
+user_num = 0
+
 class ChatConsumer(WebsocketConsumer):
     def websocket_connect(self, message):
 
         self.accept()
+        global user_num
+        user_num = user_num + 1
         group = self.scope["url_route"]["kwargs"].get("group")
         async_to_sync(self.channel_layer.group_add)(group, self.channel_name)
 
@@ -41,6 +46,8 @@ class ChatConsumer(WebsocketConsumer):
         group = self.scope["url_route"]["kwargs"].get("group")
         async_to_sync(self.channel_layer.group_discard)(group, self.channel_name)
         print('断开连接')
+        global user_num
+        user_num = user_num - 1
         raise StopConsumer()
 
     def websocket_receive(self, message):
@@ -132,36 +139,47 @@ class ChatConsumer(WebsocketConsumer):
             signature_txt = sm2.sm2_encrypt(content)
             action = "链式签名验证成功"
 
-        if con_opt == "1":
-            models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
-                                            action=action)
-        elif con_opt == "2":
-            models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash,
-                                            chainhash=final_node, sharekey=share_key, action=action)
-        elif con_opt == "3":
-            models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash,
-                                            chainhash=final_node, salt=salt, action=action)
-        elif con_opt == "4":
-            models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
-                                            action=action)
+        global user_num
+        if user_num > 2:
+            json_message = {"username_ip": username_ip, "content": "", "final_node": "",
+                            "signature_txt": "", "seq_s": "", "action_s": "",
+                            "msghash_s": "",
+                            "chainhash_s": ""}
+            group = self.scope["url_route"]["kwargs"].get("group")
+            async_to_sync(self.channel_layer.group_send)(group, {"type": "message.send", "message": json_message})
+            time.sleep(1)
         else:
-            models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
-                                            signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
-                                            action=action)
 
-        json_message = {"username_ip": username_ip, "content": content, "final_node": final_node,
-                        "signature_txt": signature_txt, "seq_s": final_seq, "action_s": action, "msghash_s": pkt_hash,
-                        "chainhash_s": final_node}
+            if con_opt == "1":
+                models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
+                                                signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
+                                                action=action)
+            elif con_opt == "2":
+                models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
+                                                signtype=sig_opt, content=content, msghash=pkt_hash,
+                                                chainhash=final_node, sharekey=share_key, action=action)
+            elif con_opt == "3":
+                models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
+                                                signtype=sig_opt, content=content, msghash=pkt_hash,
+                                                chainhash=final_node, salt=salt, action=action)
+            elif con_opt == "4":
+                models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
+                                                signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
+                                                action=action)
+            else:
+                models.HashChain.objects.create(sip=username_ip, dip=dip, seq=final_seq, contype=con_opt,
+                                                signtype=sig_opt, content=content, msghash=pkt_hash, chainhash=final_node,
+                                                action=action)
+
+            json_message = {"username_ip": username_ip, "content": content, "final_node": final_node,
+                            "signature_txt": signature_txt, "seq_s": final_seq, "action_s": action, "msghash_s": pkt_hash,
+                            "chainhash_s": final_node}
 
 
 
-        group = self.scope["url_route"]["kwargs"].get("group")
-        async_to_sync(self.channel_layer.group_send)(group, {"type": "message.send", "message": json_message})
-        time.sleep(1)
+            group = self.scope["url_route"]["kwargs"].get("group")
+            async_to_sync(self.channel_layer.group_send)(group, {"type": "message.send", "message": json_message})
+            time.sleep(1)
 
     def message_send(self, event):
         # json_event = json.loads(event)
