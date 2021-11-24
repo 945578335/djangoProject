@@ -39,6 +39,7 @@ class ChatConsumer(WebsocketConsumer):
         self.accept()
         global user_num
         user_num = user_num + 1
+        print("user_num  :", user_num)
         group = self.scope["url_route"]["kwargs"].get("group")
         async_to_sync(self.channel_layer.group_add)(group, self.channel_name)
 
@@ -48,6 +49,7 @@ class ChatConsumer(WebsocketConsumer):
         print('断开连接')
         global user_num
         user_num = user_num - 1
+        print("user_num  :", user_num)
         raise StopConsumer()
 
     def websocket_receive(self, message):

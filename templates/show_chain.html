@@ -103,39 +103,43 @@
         dip_tag.setAttribute("class", "date");
         dip_tag.innerText = "{{ sip }}";
 
-        let seq_tag = document.createElement("h5");
-        seq_tag.setAttribute("class", "title");
-        seq_tag.innerText = "[序列号]:  " + json_message["seq_s"];
-
-        let chainhash_tag = document.createElement("p");
-        chainhash_tag.setAttribute("class", "description");
-        chainhash_tag.innerText = "[报文哈希链节点值]: " + json_message["chainhash_s"] + "\r[消息哈希值]: " + json_message["msghash_s"];
-
-        {#let msghash_tag = document.createElement("p");#}
-        {#msghash_tag.setAttribute("class", "description");#}
-        {#msghash_tag.innerText = List[i]["msghash"];#}
-
         let action_tag = document.createElement("div");
-        if(json_message["action_s"] == "链式签名验证成功"){
-            action_tag.setAttribute("class", "badge badge-info");
+        if (json_message["action_s"] == ""){
+            action_tag.setAttribute("class", "badge badge-danger");
+            action_tag.innerText = "报文哈希链验证失败！！！";
+
         }else {
-            action_tag.setAttribute("class", "badge badge-success");
+
+            let seq_tag = document.createElement("h5");
+            seq_tag.setAttribute("class", "title");
+            seq_tag.innerText = "[序列号]:  " + json_message["seq_s"];
+
+            let chainhash_tag = document.createElement("p");
+            chainhash_tag.setAttribute("class", "description");
+            chainhash_tag.innerText = "[报文哈希链节点值]: " + json_message["chainhash_s"] + "\r[消息哈希值]: " + json_message["msghash_s"];
+
+
+            if(json_message["action_s"] == "链式签名验证成功"){
+                action_tag.setAttribute("class", "badge badge-info");
+            }else {
+                action_tag.setAttribute("class", "badge badge-success");
+            }
+
+            action_tag.innerText = json_message["action_s"];
+
+            tlcontent.appendChild(sip_tag);
+            tlcontent.appendChild(dip_tag);
+            tlcontent.appendChild(seq_tag);
+            tlcontent.appendChild(chainhash_tag);
+
         }
-
-        action_tag.innerText = json_message["action_s"];
-
-        tlcontent.appendChild(sip_tag);
-        tlcontent.appendChild(dip_tag);
-        tlcontent.appendChild(seq_tag);
-        tlcontent.appendChild(chainhash_tag);
         tlcontent.appendChild(action_tag);
-
         line.appendChild(tlcontent);
 
         let lstchild = document.getElementById("attention");
         lstchild.removeAttribute("id")
         line.setAttribute("id", "attention");
-        {#hashchain_line.appendChild(line);#}
+
         setTimeout(function (){
             hashchain_line.appendChild(line);
             document.querySelector('#attention').scrollIntoView({
@@ -517,7 +521,12 @@
             {#msghash_tag.innerText = List[i]["msghash"];#}
 
             let action_tag = document.createElement("div");
-            action_tag.setAttribute("class", "badge badge-success");
+
+            if (List[i]["action"].toString() == "链式签名验证成功"){
+                action_tag.setAttribute("class", "badge badge-info");
+            }else {
+                action_tag.setAttribute("class", "badge badge-success");
+            }
             action_tag.innerText = List[i]["action"];
 
             tlcontent.appendChild(sip_tag);
